@@ -1,6 +1,6 @@
 # Ignore virtual environments
 venv/
-.python_version
+.python-version
 
 # Ignore all notebooks
 *.ipynb
