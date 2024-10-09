@@ -6,3 +6,9 @@ venv/
 *.ipynb
 
 # Don't ignore significant notebooks
+
+# Ignore Python caches
+__pycache__/
+
+# Ignore VSCode settings directory
+.vscode/
