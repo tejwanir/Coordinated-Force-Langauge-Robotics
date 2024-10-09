@@ -7,7 +7,7 @@ TODO: project description
 ## MacOS
 
 ### Virtual environment setup using `pyenv` and `pyenv-virtualenv`
-It's recommend having on your system [`pyenv`](https://github.com/pyenv/pyenv) to manage multiple Python versions and [`pyenv-virtualenv`](https://github.com/pyenv/pyenv-virtualenv) to manage multiple virtual environments alongside `pyenv`.
+It's recommended to have on your system [`pyenv`](https://github.com/pyenv/pyenv) to manage multiple Python versions and [`pyenv-virtualenv`](https://github.com/pyenv/pyenv-virtualenv) to manage multiple virtual environments alongside `pyenv`.
 1. Install Python 3.117
 
     ```
@@ -16,17 +16,26 @@ It's recommend having on your system [`pyenv`](https://github.com/pyenv/pyenv) t
 2. Create the virtual environment
 
     ```
-    pyenv virtualenv 3.11.7 Coordinated-Force-Language-Robotics
+    pyenv virtualenv 3.11.7 [the virtual environment name]
     ```
-3. Verify the virtual environment is activated while in the project directory. There is already a `.python-version` file in the project root that will automatically let `pyenv` and `pyenv-virtualenv` know to use the virtual environment that was just created
+3. Activate the virtual environment
+
+    ```
+    pyenv activate [the virtual environment name]
+    ```
+    Can optionally set the virtual environment locally for the project by creating a `.python-version` at the root directory of the project
+    ```
+    pyenv local [the virtual environment name]
+    ```
+4. Verify the virtual environment is activated
     ```
     pyenv version
     ```
     The output should show
     ```
-    Coordinate-Force-Language-Robotics (set by [some path]/Coordinate-Force-Language-Robotics/.python-version)
+    [the virtual environment name] (set by [some path]/[the virtual environment name]/.python-version)
     ```
-4. Verify the correct Python version is being used
+3. Verify the correct Python version is being used
 
     ```
     python --version
@@ -35,17 +44,17 @@ It's recommend having on your system [`pyenv`](https://github.com/pyenv/pyenv) t
     ```
     Python 3.11.7
     ```
-5. Verify the correct pip is being used
+6. Verify the correct pip is being used
 
     ```
-    !pip --version
+    pip --version
     ```
     The output should show
     ```
-    pip [some version] from [some path]/.pyenv/versions/Coordinate-Force-Language-Robotics/lib/python3.11/site-packages/pip (python 3.11)
+    pip [some version] from [some path]/.pyenv/versions/[the virtual environment name]/lib/python3.11/site-packages/pip (python 3.11)
     ```
 ### Install project modules
-Once a virtual environment named `Coordinated-Force-Language-Robotics` that uses Python version `3.11.7` exists on the system, simply run:
+Once a virtual environment that uses Python version `3.11.7` exists on the system and is activated, simply run:
 ```
 pip install -r requirements.txt
 ```
