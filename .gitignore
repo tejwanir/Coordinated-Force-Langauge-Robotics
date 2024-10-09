@@ -1,0 +1,4 @@
+# Ignore all notebooks
+*.ipynb
+
+# Don't ignore significant notebooks
