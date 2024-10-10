@@ -54,6 +54,8 @@ class RealtimeFigure:
 
             lines = ax.plot(x, y, color='black')
 
+            ax.grid(True)
+
             if self.subplot_options_set and self.subplot_options_set[i]:
                 self._apply_subplot_options(ax, lines, self.subplot_options_set[i])
 
