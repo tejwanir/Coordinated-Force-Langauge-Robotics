@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import rtde_receive
 import rtde_control
 import numpy as np
@@ -11,13 +11,13 @@ class Robot:
     def getPose(self):
         return split_translation_rotation(self.receive.getActualTCPPose())
     
-    def setPose(self, translation_pose: List[float], rotation_pose: List[float], speed: float = 0.25, acceleration: float = 1.2, asynchronous: bool = False):
+    def setPose(self, translation_pose: Optional[List[float]] = None, rotation_pose: Optional[List[float]] = None, speed: float = 0.25, acceleration: float = 1.2, asynchronous: bool = False):
         self.control.moveL(concat_translation_rotation(translation_pose, rotation_pose), speed, acceleration, asynchronous)
 
     def getVelocity(self):
         return split_translation_rotation(self.receive.getActualTCPSpeed())
     
-    def setVelocity(self, translation_velocity: List[float], rotation_velocity: List[float], acceleration: float = 0.25, time: float = 0.0):
+    def setVelocity(self, translation_velocity: Optional[List[float]] = None, rotation_velocity: Optional[List[float]] = None, acceleration: float = 0.25, time: float = 0.0):
         self.control.speedL(concat_translation_rotation(translation_velocity, rotation_velocity), acceleration, time)
 
     def getForce(self):
@@ -26,9 +26,21 @@ class Robot:
 def split_translation_rotation(translation_rotation: List[float]):
     if len(translation_rotation) != 6:
         raise ValueError(f"Expected a list of length 6, but got {len(translation_rotation)}")
+    
     return np.asarray(translation_rotation[:3]), np.asarray(translation_rotation[3:])
 
-def concat_translation_rotation(translation: List[float], rotation: List[float]):
-    if len(translation) != 3 or len(rotation) != 3:
-        raise ValueError(f"Both translation and rotation must be lists of length 3. Got lengths {len(translation)} and {len(rotation)}")
+def concat_translation_rotation(translation: Optional[List[float]] = None, rotation: Optional[List[float]] = None):
+    if translation is None and rotation is None:
+        raise ValueError("At least one of translation or rotation must be provided")
+
+    if translation is None:
+        translation = [0.0, 0.0, 0.0]
+    if len(translation) != 3:
+        raise ValueError(f"Translation must be a list of length 3. Got length {len(translation)}")
+
+    if rotation is None:
+        rotation = [0.0, 0.0, 0.0]
+    if len(rotation) != 3:
+        raise ValueError(f"Rotation must be a list of length 3. Got length {len(rotation)}")
+    
     return np.concatenate((translation, rotation))
