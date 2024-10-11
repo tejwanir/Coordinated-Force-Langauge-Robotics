@@ -24,7 +24,11 @@ class Robot:
         return split_translation_rotation(self.receive.getActualTCPForce())
     
 def split_translation_rotation(translation_rotation: List[float]):
+    if len(translation_rotation) != 6:
+        raise ValueError(f"Expected a list of length 6, but got {len(translation_rotation)}")
     return np.asarray(translation_rotation[:3]), np.asarray(translation_rotation[3:])
 
 def concat_translation_rotation(translation: List[float], rotation: List[float]):
-    return np.concat((translation, rotation))
+    if len(translation) != 3 or len(rotation) != 3:
+        raise ValueError(f"Both translation and rotation must be lists of length 3. Got lengths {len(translation)} and {len(rotation)}")
+    return np.concatenate((translation, rotation))
