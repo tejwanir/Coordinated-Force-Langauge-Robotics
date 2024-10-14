@@ -10,7 +10,7 @@ import numpy as np
 class RealtimeFigure:
     def _verify_mode(self, required_mode: str):
         if self.mode != required_mode:
-            raise ValueError(f'Mode must be {required_mode} to run, not {self.mode}')
+            raise ValueError(f'Mode must be {required_mode} to run, not {self.mode}.')
 
     def __init__(self, rows: int = 1, columns: int = 1, subplot_options_set: Optional[List[Optional[Dict[str, Any]]]] = None, mode: str = 'inline'):
         self.rows = rows
