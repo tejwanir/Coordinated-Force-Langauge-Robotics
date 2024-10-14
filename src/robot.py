@@ -22,11 +22,16 @@ class Robot:
             axes = Robot.TRANSLATION_ROTATION
 
         if isinstance(axes, int):
-            axes = [axes]
-
-        if all(isinstance(subset, (tuple, list)) for subset in axes):
-            return tuple(Robot._extract_axes(translation_rotation, subset) for subset in axes)
+            return translation_rotation[axes]
+        elif isinstance(axes, (tuple, list)):
+            if all(isinstance(subset, (tuple, list)) for subset in axes):
+                return tuple(Robot._extract_axes(translation_rotation, subset) for subset in axes)
         return Robot._extract_axes(translation_rotation, axes)
+    
+    @staticmethod
+    def _update_axes(translation_rotation: List[float], input: List[float], axes: List[int]):
+        for i, ax in enumerate(axes):
+            translation_rotation[ax] = input[i]
 
     @staticmethod
     def set_axes(translation_rotation: List[float], input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False):
@@ -36,9 +41,13 @@ class Robot:
         if isinstance(axes, int):
             axes = [axes]
             input = [input]
-            
-        for i, ax in enumerate(axes):
-            translation_rotation[ax] = input[i]
+
+        if isinstance(axes, (tuple, list)):
+            if all(isinstance(subset, (tuple, list)) for subset in axes):
+                for subset_input, subset_axes in zip(input, axes):
+                    Robot._update_axes(translation_rotation, subset_input, subset_axes)
+            else:
+                Robot._update_axes(translation_rotation, input, axes)
 
         if reset_unspecified:
             for i in range(len(translation_rotation)):
@@ -50,8 +59,8 @@ class Robot:
         return np.zeros(6)
 
     def __init__(self, ip: str):
-        self.receive = rtde_receive.RTDEReceiveInterface(ip)
-        self.control = rtde_control.RTDEControlInterface(ip)
+        # self.receive = rtde_receive.RTDEReceiveInterface(ip)
+        # self.control = rtde_control.RTDEControlInterface(ip)
         self._pose_input = Robot.zeroed_translation_rotation()
         self._velocity_input = Robot.zeroed_translation_rotation()
 
