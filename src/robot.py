@@ -17,7 +17,7 @@ class Robot:
         return np.asarray([translation_rotation[ax] for ax in axes])
 
     @staticmethod
-    def _get_axes(translation_rotation: List[float], axes: Optional[Union[int, List[int], List[List[int]]]] = None):
+    def get_axes(translation_rotation: List[float], axes: Optional[Union[int, List[int], List[List[int]]]] = None):
         if axes is None:
             axes = Robot.TRANSLATION_ROTATION
 
@@ -29,7 +29,7 @@ class Robot:
         return Robot._extract_axes(translation_rotation, axes)
 
     @staticmethod
-    def _set_axes(translation_rotation: List[float], input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False):
+    def set_axes(translation_rotation: List[float], input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False):
         if axes is None:
             axes = Robot.TRANSLATION_ROTATION
 
@@ -46,28 +46,28 @@ class Robot:
                     translation_rotation[i] = 0.0
 
     @staticmethod
-    def _zeroed_translation_rotation():
+    def zeroed_translation_rotation():
         return np.zeros(6)
 
     def __init__(self, ip: str):
         self.receive = rtde_receive.RTDEReceiveInterface(ip)
         self.control = rtde_control.RTDEControlInterface(ip)
-        self._pose_input = Robot._zeroed_translation_rotation()
-        self._velocity_input = Robot._zeroed_translation_rotation()
+        self._pose_input = Robot.zeroed_translation_rotation()
+        self._velocity_input = Robot.zeroed_translation_rotation()
 
     def getPose(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
-        return self._get_axes(self.receive.getActualTCPPose(), axes)
+        return self.get_axes(self.receive.getActualTCPPose(), axes)
     
     def setPose(self, input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False, speed: float = 0.25, acceleration: float = 1.2, asynchronous: bool = False):
-        self._set_axes(self._pose_input, input, axes, reset_unspecified)
+        self.set_axes(self._pose_input, input, axes, reset_unspecified)
         self.control.moveL(self._pose_input, speed, acceleration, asynchronous)
 
     def getVelocity(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
-        return self._get_axes(self.receive.getActualTCPSpeed(), axes)
+        return self.get_axes(self.receive.getActualTCPSpeed(), axes)
     
     def setVelocity(self, input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False, acceleration: float = 0.25, time: float = 0.0):
-        self._set_axes(self._velocity_input, input, axes, reset_unspecified)
+        self.set_axes(self._velocity_input, input, axes, reset_unspecified)
         self.control.speedL(self._velocity_input, acceleration, time)
 
     def getForce(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
-        return self._get_axes(self.receive.getActualTCPForce(), axes)
+        return self.get_axes(self.receive.getActualTCPForce(), axes)
