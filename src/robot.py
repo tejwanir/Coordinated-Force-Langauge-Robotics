@@ -52,22 +52,22 @@ class Robot:
     def __init__(self, ip: str):
         self.receive = rtde_receive.RTDEReceiveInterface(ip)
         self.control = rtde_control.RTDEControlInterface(ip)
-        self._pose = Robot._zeroed_translation_rotation()
-        self._velocity = Robot._zeroed_translation_rotation()
+        self._pose_input = Robot._zeroed_translation_rotation()
+        self._velocity_input = Robot._zeroed_translation_rotation()
 
     def getPose(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
         return self._get_axes(self.receive.getActualTCPPose(), axes)
     
     def setPose(self, input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False, speed: float = 0.25, acceleration: float = 1.2, asynchronous: bool = False):
-        self._set_axes(self._pose, input, axes, reset_unspecified)
-        self.control.moveL(self._pose, speed, acceleration, asynchronous)
+        self._set_axes(self._pose_input, input, axes, reset_unspecified)
+        self.control.moveL(self._pose_input, speed, acceleration, asynchronous)
 
     def getVelocity(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
         return self._get_axes(self.receive.getActualTCPSpeed(), axes)
     
     def setVelocity(self, input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False, acceleration: float = 0.25, time: float = 0.0):
-        self._set_axes(self._velocity, input, axes, reset_unspecified)
-        self.control.speedL(self._velocity, acceleration, time)
+        self._set_axes(self._velocity_input, input, axes, reset_unspecified)
+        self.control.speedL(self._velocity_input, acceleration, time)
 
     def getForce(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
         return self._get_axes(self.receive.getActualTCPForce(), axes)
