@@ -50,22 +50,24 @@ class Robot:
         return np.zeros(6)
 
     def __init__(self, ip: str):
-        # self.receive = rtde_receive.RTDEReceiveInterface(ip)
-        # self.control = rtde_control.RTDEControlInterface(ip)
+        self.receive = rtde_receive.RTDEReceiveInterface(ip)
+        self.control = rtde_control.RTDEControlInterface(ip)
         self._pose = Robot._zeroed_translation_rotation()
         self._velocity = Robot._zeroed_translation_rotation()
 
-    # def getPose(self):
-    #     return split_translation_rotation(self.receive.getActualTCPPose())
+    def getPose(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
+        return self._get_axes(self.receive.getActualTCPPose(), axes)
     
-    # def setPose(self, translation_pose: Optional[List[float]] = None, rotation_pose: Optional[List[float]] = None, speed: float = 0.25, acceleration: float = 1.2, asynchronous: bool = False):
-    #     self.control.moveL(concat_translation_rotation(translation_pose, rotation_pose), speed, acceleration, asynchronous)
+    def setPose(self, input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False, speed: float = 0.25, acceleration: float = 1.2, asynchronous: bool = False):
+        self._set_axes(self._pose, input, axes, reset_unspecified)
+        self.control.moveL(self._pose, speed, acceleration, asynchronous)
 
-    # def getVelocity(self):
-    #     return split_translation_rotation(self.receive.getActualTCPSpeed())
+    def getVelocity(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
+        return self._get_axes(self.receive.getActualTCPSpeed(), axes)
     
-    # def setVelocity(self, translation_velocity: Optional[List[float]] = None, rotation_velocity: Optional[List[float]] = None, acceleration: float = 0.25, time: float = 0.0):
-    #     self.control.speedL(concat_translation_rotation(translation_velocity, rotation_velocity), acceleration, time)
+    def setVelocity(self, input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False, acceleration: float = 0.25, time: float = 0.0):
+        self._set_axes(self._velocity, input, axes, reset_unspecified)
+        self.control.speedL(self._velocity, acceleration, time)
 
-    # def getForce(self):
-    #     return split_translation_rotation(self.receive.getActualTCPForce())
+    def getForce(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
+        return self._get_axes(self.receive.getActualTCPForce(), axes)
