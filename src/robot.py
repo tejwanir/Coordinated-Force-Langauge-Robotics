@@ -46,11 +46,12 @@ class Robot:
             if all(isinstance(subset, (tuple, list)) for subset in axes):
                 for subset_input, subset_axes in zip(input, axes):
                     Robot._update_axes(translation_rotation, subset_input, subset_axes)
+                axes = set(ax for subset_axes in axes for ax in subset_axes)
             else:
                 Robot._update_axes(translation_rotation, input, axes)
 
         if reset_unspecified:
-            for i in range(len(translation_rotation)):
+            for i in Robot.TRANSLATION_ROTATION:
                 if i not in axes:
                     translation_rotation[i] = 0.0
 
