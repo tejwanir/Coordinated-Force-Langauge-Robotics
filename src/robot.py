@@ -60,8 +60,8 @@ class Robot:
         return np.zeros(6)
 
     def __init__(self, ip: str):
-        # self.receive = rtde_receive.RTDEReceiveInterface(ip)
-        # self.control = rtde_control.RTDEControlInterface(ip)
+        self.receive = rtde_receive.RTDEReceiveInterface(ip)
+        self.control = rtde_control.RTDEControlInterface(ip)
         self._pose_input = Robot.zeroed_translation_rotation()
         self._velocity_input = Robot.zeroed_translation_rotation()
 
