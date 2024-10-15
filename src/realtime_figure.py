@@ -75,7 +75,7 @@ class RealtimeFigure:
             "ylabel": ax.set_ylabel,
             "xlim": ax.set_xlim,
             "ylim": ax.set_ylim,
-            "color": lambda colors: [line.set_color(color) for line, color in zip(lines, colors)]
+            "colors": lambda colors: [line.set_color(color) for line, color in zip(lines, colors)]
         }
 
         for option, value in subplot_options.items():

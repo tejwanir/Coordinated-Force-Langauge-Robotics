@@ -57,27 +57,33 @@ class Robot:
 
     @staticmethod
     def zeroed_translation_rotation():
-        return np.zeros(6)
+        return np.zeros(len(Robot.TRANSLATION_ROTATION))
 
-    def __init__(self, ip: str):
+    def __init__(self, ip: str, translational_force_deadband: Optional[float] = None, rotational_force_deadband: Optional[float] = None):
         self.receive = rtde_receive.RTDEReceiveInterface(ip)
         self.control = rtde_control.RTDEControlInterface(ip)
+        self.translational_force_deadband = translational_force_deadband
+        self.rotational_force_deadband = rotational_force_deadband
         self._pose_input = Robot.zeroed_translation_rotation()
         self._velocity_input = Robot.zeroed_translation_rotation()
 
-    def getPose(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
+    def get_pose(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
         return self.get_axes(self.receive.getActualTCPPose(), axes)
     
-    def setPose(self, input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False, speed: float = 0.25, acceleration: float = 1.2, asynchronous: bool = False):
+    def set_pose(self, input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False, speed: float = 0.25, acceleration: float = 1.2, asynchronous: bool = False):
         self.set_axes(self._pose_input, input, axes, reset_unspecified)
         self.control.moveL(self._pose_input, speed, acceleration, asynchronous)
 
-    def getVelocity(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
+    def get_velocity(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
         return self.get_axes(self.receive.getActualTCPSpeed(), axes)
     
-    def setVelocity(self, input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False, acceleration: float = 0.25, time: float = 0.0):
+    def set_velocity(self, input: Union[float, List[float]], axes: Optional[Union[int, List[int]]] = None, reset_unspecified: bool = False, acceleration: float = 0.25, time: float = 0.0):
         self.set_axes(self._velocity_input, input, axes, reset_unspecified)
         self.control.speedL(self._velocity_input, acceleration, time)
 
-    def getForce(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
-        return self.get_axes(self.receive.getActualTCPForce(), axes)
+    def get_force(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
+        force = self.receive.getActualTCPForce()
+        for deadband, axes_to_deadband in zip((self.translational_force_deadband, self.rotational_force_deadband), Robot.TRANSLATION_ROTATION_SEPARATED):
+            if deadband is not None and np.linalg.norm(self.get_axes(force, axes_to_deadband)) < deadband:
+                self.set_axes(force, [0]*len(axes_to_deadband), axes_to_deadband)
+        return self.get_axes(force, axes)
