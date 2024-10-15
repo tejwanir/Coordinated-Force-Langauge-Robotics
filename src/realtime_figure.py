@@ -52,6 +52,8 @@ class RealtimeFigure:
 
             x, y = data_set
 
+            ax.clear()
+
             lines = ax.plot(x, y, color='black')
 
             ax.grid(True)
