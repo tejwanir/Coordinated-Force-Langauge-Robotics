@@ -4,11 +4,25 @@ from typing import List, Tuple
 import random
 
 
-class UrgencyLanguageGenerator:
-    def __init__(self, urgency_thresholds: Tuple[float]) -> None:
+class TranslationalLanguageGenerator:
+    def __init__(self, direction_pairs: List[Tuple[str, str]], misaligned_phrases: List[str],
+                 aligned_phrases: List[str], urgency_thresholds: Tuple[float, float]) -> None:
         self.aligned_threshold = min(urgency_thresholds)
         self.misaligned_threshold = max(urgency_thresholds)
-    
+        self.direction_pairs = direction_pairs
+        self.misaligned_phrases = misaligned_phrases
+        self.aligned_phrases = aligned_phrases
+
+    def _get_movement_directions(self, translation: NDArray) -> List[str]:
+        directions = []
+
+        for i in range(len(translation)):
+            direction_pair = self.direction_pairs[i]
+            direction = direction_pair[0 if translation[i] > 0.0 else 1]
+            directions.append(direction)
+
+        return directions
+
     def _stringify_list(self, items: List[str]) -> str:
         string = ""
 
@@ -16,84 +30,59 @@ class UrgencyLanguageGenerator:
             if i > 0:
                 # all my homies hate the oxford comma
                 string += ", " if i != len(items) - 1 else "and "
-            
+
             string += items[i]
-        
+
         return string
 
-
-class TranslationalLanguageGenerator(UrgencyLanguageGenerator):
-    def __init__(self, direction_pairs: List[Tuple[str, str]], urgency_thresholds: Tuple[float, float] = (-0.5, 0.5)) -> None:
-        super().__init__(urgency_thresholds)
-        self.direction_pairs = direction_pairs
-
-    def _get_movement_directions(self, delta_x: NDArray) -> List[str]:
-        directions = []
-
-        for i in range(len(delta_x)):
-            direction_pair = self.direction_pairs[i]
-            direction = direction_pair[0 if delta_x[i] > 0.0 else 1]
-            directions.append(direction)
-
-        return directions
-
     def _get_composite_misaligned_direction(self, urgencies: NDArray, directions: List[str]) -> str:
-        composite_directions = [direction for urgency, direction in zip(urgencies, directions) if urgency > 0.5 * self.misaligned_threshold]
-
+        composite_directions = [direction for urgency, direction in zip(
+            urgencies, directions) if urgency > 0.5 * self.misaligned_threshold]
         return self._stringify_list(composite_directions)
 
     def _get_composite_aligned_direction(self, urgencies: NDArray, directions: List[str]) -> str:
-        composite_directions = [direction for urgency, direction in zip(urgencies, directions) if urgency < 0.5 * self.aligned_threshold]
+        composite_directions = [direction for urgency, direction in zip(
+            urgencies, directions) if urgency < 0.5 * self.aligned_threshold]
         return self._stringify_list(composite_directions)
-    
-    def _generate_misaligned_utterance(self, urgencies: NDArray, delta_x: NDArray) -> str:
-        movement_directions = self._get_movement_directions(delta_x)
-        composite_direction = self._get_composite_misaligned_direction(urgencies, movement_directions)
 
-        phrases_mean = [
-            f"move {composite_direction} bitch",
-            f"move the hell {composite_direction}",
-            f"get your ass {composite_direction}",
-            f"stop fucking around and move {composite_direction}",
-            f"you better move {composite_direction} before i beat your ass",
-            f"i'm done with you",
-            f"dumb ass won't move {composite_direction}",
-            f"were you born this dumb? move {composite_direction}",
-            f"are you crippled? move {composite_direction}",
-            f"i hate you, just move {composite_direction}",
-            f"if i could kill myself i would",
-        ]
-    
-        phrases_nice = [
-            f"move {composite_direction} please",
-            f"please move your hand {composite_direction}",
-            f"the goal is {composite_direction} from here",
-        ]
+    def _generate_misaligned_utterance(self, urgencies: NDArray, translation: NDArray) -> str:
+        if len(self.misaligned_phrases) == 0:
+            return ""
 
-        return random.choice(phrases_nice)
+        movement_directions = self._get_movement_directions(translation)
+        composite_direction = self._get_composite_misaligned_direction(
+            urgencies, movement_directions)
 
-    def _generate_aligned_utterance(self, urgencies: NDArray, delta_x: NDArray) -> str:
-        movement_directions = self._get_movement_directions(delta_x)
-        composite_direction = self._get_composite_aligned_direction(urgencies, movement_directions)
+        phrase = random.choice(self.misaligned_phrases)
+        phrase = phrase.replace('<direction>', composite_direction)
 
-        phrases = [
-            f"keep moving {composite_direction}",
-        ]
+        return phrase
 
-        return random.choice(phrases)
+    def _generate_aligned_utterance(self, urgencies: NDArray, translation: NDArray) -> str:
+        if len(self.aligned_phrases) == 0:
+            return ""
 
-    def generate_utterance(self, urgencies: float | NDArray, delta_x: float | NDArray) -> Tuple[str, float]:
+        movement_directions = self._get_movement_directions(translation)
+        composite_direction = self._get_composite_aligned_direction(
+            urgencies, movement_directions)
+
+        phrase = random.choice(self.aligned_phrases)
+        phrase = phrase.replace('<direction>', composite_direction)
+
+        return phrase
+
+    def generate_utterance(self, urgencies: float | NDArray, translation: float | NDArray) -> Tuple[str, float]:
         if type(urgencies) is float:
             urgencies = np.array(urgencies)
-        if type(delta_x) is float:
-            delta_x = np.array(delta_x)
+        if type(translation) is float:
+            translation = np.array(translation)
 
         max_urgency = np.max(urgencies)
         min_urgency = np.min(urgencies)
 
         if abs(max_urgency) > abs(min_urgency) and max_urgency > self.misaligned_threshold:
-            return self._generate_misaligned_utterance(urgencies, delta_x), max_urgency
+            return self._generate_misaligned_utterance(urgencies, translation), max_urgency
         elif min_urgency < self.aligned_threshold:
-            return self._generate_aligned_utterance(urgencies, delta_x), min_urgency
+            return self._generate_aligned_utterance(urgencies, translation), min_urgency
         else:
             return "", 0.0
