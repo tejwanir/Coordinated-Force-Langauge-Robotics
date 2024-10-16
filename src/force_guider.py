@@ -11,7 +11,7 @@ class ForceGuider:
 
 
 class UrgencyForceGuider(ForceGuider):
-    def __init__(self, decay_rate: float | NDArray = 1.0) -> None:
+    def __init__(self, decay_rate: float | NDArray = 32.0, guidance_strength: float = 8.0) -> None:
         super().__init__()
 
         self.alpha = 0.0
@@ -20,6 +20,7 @@ class UrgencyForceGuider(ForceGuider):
         self.dbetadt = 0.0
         self.force = 0.0
         self.decay_rate = decay_rate
+        self.guidance_strength = guidance_strength
 
     def update(self, urgency: float | NDArray, dt: float) -> None:
         previous_alpha = self.alpha
@@ -33,5 +34,6 @@ class UrgencyForceGuider(ForceGuider):
         beta_max = 1.0 / self.decay_rate
         beta_norm = self.beta / beta_max
 
-        F_guide =  max(beta_norm, 0.0) * (8 * F_ideal - F_human) * max(1.0 - self.alpha, 0.0)
+        weight = np.clip(beta_norm / (np.linalg.norm(F_human) + 1.0), 0.0, 1.0)
+        F_guide = (1.0 - weight) * F_human + weight * F_ideal * self.guidance_strength - F_human
         return F_guide
