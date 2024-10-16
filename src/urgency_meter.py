@@ -14,11 +14,11 @@ class UrgencyMeter:
 
 
 class UrgencyMeterPID(UrgencyMeter):
-    def __init__(self, K_p: float | NDArray, K_i: float | NDArray, K_d: float | NDArray) -> None:
+    def __init__(self, K_p: float | NDArray, K_i: float | NDArray, K_d: float | NDArray, scale: float | NDArray = 1.0) -> None:
         super().__init__()
-        self.K_p = K_p
-        self.K_i = K_i
-        self.K_d = K_d
+        self.K_p = K_p * scale
+        self.K_i = K_i * scale
+        self.K_d = K_d * scale
         self.A = 0.0
         self.int_A = 0.0
         self.dAdt = 0.0
