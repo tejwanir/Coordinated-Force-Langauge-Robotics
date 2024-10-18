@@ -1,16 +1,29 @@
 import os
 import time
+import subprocess
+
 
 class Vocalizer:
     def __init__(self, buffer_period: float = 0.5) -> None:
         self.buffer_period = buffer_period
         self.last_utter_time = time.time() - buffer_period
 
-    def utter(self, phrase: str, interupt: bool = False) -> None:
+    def utter(self, phrase: str, interupt: bool = False) -> bool:
         if interupt:
-            os.system(f'killall say; say "{phrase}" &')
+            os.system(f'killall say; say "{phrase}" -v Karen &')
+
             self.last_utter_time = time.time()
+            return True
         elif time.time() - self.last_utter_time >= self.buffer_period:
-            os.system(f'pgrep say || say "{phrase}" &')
+            pgrep_command = subprocess.run(
+                ['pgrep', 'say'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if pgrep_command.returncode == 0:
+                return False
+
+            subprocess.Popen(['say', f'"{phrase}"', '-v', 'Karen'],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
             self.last_utter_time = time.time()
-        
+            return True
+        else:
+            return False

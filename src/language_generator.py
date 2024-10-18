@@ -72,10 +72,10 @@ class TranslationalLanguageGenerator:
         return phrase
 
     def generate_utterance(self, urgencies: float | NDArray, translation: float | NDArray) -> Tuple[str, float]:
-        if type(urgencies) is float:
-            urgencies = np.array(urgencies)
-        if type(translation) is float:
-            translation = np.array(translation)
+        if not isinstance(urgencies, np.ndarray):
+            urgencies = np.array([urgencies])
+        if not isinstance(translation, np.ndarray):
+            translation = np.array([translation])
 
         max_urgency = np.max(urgencies)
         min_urgency = np.min(urgencies)

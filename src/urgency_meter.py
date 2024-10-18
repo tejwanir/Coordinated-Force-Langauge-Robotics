@@ -23,17 +23,23 @@ class UrgencyMeterPID(UrgencyMeter):
         self.int_A = 0.0
         self.dAdt = 0.0
 
-    def update(self, alignment: float, dt: float, integral_reset_threshold: float | NDArray = 0.2) -> None:
+    def update(self, alignment: float | NDArray, dt: float, integral_reset_threshold: float | NDArray = 0.2) -> None:
         previous_A = self.A
         self.A = alignment
         self.dAdt = (self.A - previous_A) / dt
         self.int_A += self.A * dt
 
-        self.int_A[abs(self.A) < integral_reset_threshold] = 0.0
-        self.int_A[np.sign(previous_A) != np.sign(self.A)] = 0.0
+        if not isinstance(self.int_A, np.ndarray):
+            self.int_A = 0.0 if abs(
+                self.A) < integral_reset_threshold else self.int_A
+            self.int_A = 0.0 if np.sign(
+                previous_A) != np.sign(self.A) else self.int_A
+        else:
+            self.int_A[np.abs(self.A) < integral_reset_threshold] = 0.0
+            self.int_A[np.sign(previous_A) != np.sign(self.A)] = 0.0
 
         pid = self.K_p * self.A + self.K_i * self.int_A + self.K_d * self.dAdt
-        self.alpha = 2.0 / (1.0 + np.exp(-pid)) - 1.0
+        self.alpha = np.tanh(pid)
 
     def reset_integral(self) -> None:
         self.int_A = 0.0
