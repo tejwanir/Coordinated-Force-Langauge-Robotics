@@ -10,7 +10,7 @@ class Vocalizer:
 
     def utter(self, phrase: str, interupt: bool = False) -> bool:
         if interupt:
-            os.system(f'killall say; say "{phrase}" -v Karen &')
+            os.system(f'killall say; say "{phrase}" &')
 
             self.last_utter_time = time.time()
             return True
@@ -20,7 +20,7 @@ class Vocalizer:
             if pgrep_command.returncode == 0:
                 return False
 
-            subprocess.Popen(['say', f'"{phrase}"', '-v', 'Karen'],
+            subprocess.Popen(['say', f'"{phrase}"'],
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             self.last_utter_time = time.time()
