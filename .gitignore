@@ -6,9 +6,13 @@ venv/
 *.ipynb
 
 # Don't ignore significant notebooks
+!notebooks/calibrate.ipynb
 
 # Ignore Python caches
 __pycache__/
 
 # Ignore VSCode settings directory
 .vscode/
+
+# Ignore .npy files
+*.npy
