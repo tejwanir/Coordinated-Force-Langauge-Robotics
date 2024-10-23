@@ -18,8 +18,8 @@ class RealtimeFigure:
 
         self.rows = rows
         self.columns = columns
-
-        self.subplot_options_set = subplot_options_set if subplot_options_set is not None else []
+        self.subplot_options_set = subplot_options_set
+        self.initialized = False
 
     def subplots_num(self):
         return self.rows * self.columns
@@ -37,8 +37,8 @@ class RealtimeFigure:
 
             ax.clear()
 
-            if len(x) == 0 or len(y) == 0:
-                continue
+            if len(x) != len(y):
+                raise ValueError(f'x and y must have the same length, but got {len(x)} and {len(y)} respectively.')
 
             lines = ax.plot(x, y, color='black')
 
@@ -60,39 +60,36 @@ class RealtimeFigure:
 
         self.fig.tight_layout()
 
-    def render(self):
-        raise NotImplementedError("Subclasses should implement the render method.")
-
     def update(self, data_sets: List[Optional[Tuple[List[Number], List[Number]]]]):
+        if not self.initialized:
+            self.initialize()
+            self.initialized = True
+        self.pre_update_hook()
         self.update_subplots(data_sets)
         self.render()
 
+    def initialize(self):
+        pass
+
+    def pre_update_hook(self):
+        pass
+
+    def render(self):
+        raise NotImplementedError("Subclasses should implement the render method.")
+
 class RealtimeFigureInline(RealtimeFigure):
-    def __init__(
-        self,
-        rows: int = 1,
-        columns: int = 1,
-        subplot_options_set: Optional[List[Optional[Dict[str, Any]]]] = None,
-    ):
-        super().__init__(rows, columns, subplot_options_set)
+    def initialize(self):
         plt.switch_backend('module://matplotlib_inline.backend_inline')
+
+    def pre_update_hook(self):
+        self.init_subplots()
 
     def render(self):
         clear_output(wait=True)
         plt.show(block=False)
 
-    def update(self, data_sets: List[Optional[Tuple[List[Number], List[Number]]]]):
-        self.init_subplots()
-        super().update(data_sets)
-
 class RealtimeFigureWindow(RealtimeFigure):
-    def __init__(
-        self,
-        rows: int = 1,
-        columns: int = 1,
-        subplot_options_set: Optional[List[Optional[Dict[str, Any]]]] = None,
-    ):
-        super().__init__(rows, columns, subplot_options_set)
+    def initialize(self):
         plt.switch_backend('TkAgg')
         plt.ion()
         self.init_subplots()
