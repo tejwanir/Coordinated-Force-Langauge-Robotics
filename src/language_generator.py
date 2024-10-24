@@ -81,7 +81,7 @@ class TranslationalLanguageGenerator:
         max_urgency = np.max(urgencies)
         min_urgency = np.min(urgencies)
 
-        if abs(max_urgency) > abs(min_urgency) and max_urgency > self.misaligned_threshold:
+        if abs(max_urgency) >= abs(min_urgency) and max_urgency > self.misaligned_threshold:
             return self._generate_misaligned_utterance(urgencies, translation), max_urgency
         elif min_urgency < self.aligned_threshold:
             return self._generate_aligned_utterance(urgencies, translation), min_urgency

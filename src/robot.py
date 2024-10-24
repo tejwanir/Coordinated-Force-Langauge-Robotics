@@ -82,8 +82,14 @@ class Robot:
         self.control.speedL(self._velocity_input, acceleration, time)
 
     def get_force(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
-        force = self.receive.getActualTCPForce()
+        force = np.array(self.receive.getActualTCPForce())
+
         for deadband, axes_to_deadband in zip((self.translational_force_deadband, self.rotational_force_deadband), Robot.TRANSLATION_ROTATION_SEPARATED):
-            if deadband is not None and np.linalg.norm(self.get_axes(force, axes_to_deadband)) < deadband:
-                self.set_axes(force, [0]*len(axes_to_deadband), axes_to_deadband)
+            magnitude = np.linalg.norm(self.get_axes(force, axes_to_deadband))
+
+            if deadband is not None and magnitude < deadband:
+                new_magnitude = max(0, 2 * magnitude - deadband)
+                new_force = new_magnitude * force / magnitude
+                self.set_axes(force, new_force, axes_to_deadband)
+        
         return self.get_axes(force, axes)
