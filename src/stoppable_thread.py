@@ -20,6 +20,7 @@ class StoppableThread(threading.Thread):
         except Exception as e:
             print(f'Error occurred in thread {self.name}: {e}')
             traceback.print_exc()
+        finally:
             self.stop_event.set()
 
     def stop(self):
