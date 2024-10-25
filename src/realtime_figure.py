@@ -3,6 +3,7 @@ from numbers import Number
 from matplotlib import pyplot as plt
 import numpy as np
 from IPython.display import clear_output
+import time
 
 class RealtimeFigure:
     def __init__(
@@ -10,15 +11,20 @@ class RealtimeFigure:
         rows: int = 1,
         columns: int = 1,
         subplot_options_set: Optional[List[Optional[Dict[str, Any]]]] = None,
+        refresh_rate: int = 10,
     ):
         for name, value in [('rows', rows),
                             ('columns', columns)]:
             if not isinstance(value, int) or value < 1:
-                raise ValueError(f"Invalid value for '{name}': {value}. Must be a counting number.")
+                raise ValueError(f'Invalid value for {name}: {value}. Must be a counting number.')
+            
+        if refresh_rate <= 0:
+            raise ValueError(f'Invalid value for refresh rate: {refresh_rate}. Must be a positive number.')
 
         self.rows = rows
         self.columns = columns
         self.subplot_options_set = subplot_options_set
+        self.refresh_rate = refresh_rate
         self.initialized = False
 
     def subplots_num(self):
@@ -67,6 +73,7 @@ class RealtimeFigure:
         self.pre_update_hook()
         self.update_subplots(data_sets)
         self.render()
+        time.sleep(1 / self.refresh_rate)
 
     def initialize(self):
         pass
@@ -112,9 +119,10 @@ def create(
         rows: int = 1,
         columns: int = 1,
         subplot_options_set: Optional[List[Optional[Dict[str, Any]]]] = None,
-        mode: str = 'inline'
+        refresh_rate: int = 10,
+        mode: str = 'inline',
     ) -> RealtimeFigure:
     if mode in _mode_to_realtime_figure_subclass_map:
-        return _mode_to_realtime_figure_subclass_map[mode](rows, columns, subplot_options_set)
+        return _mode_to_realtime_figure_subclass_map[mode](rows, columns, subplot_options_set, refresh_rate)
     else:
         raise ValueError(f"Unsupported mode '{mode}' received. Supported modes are: {_modes_string}.")
