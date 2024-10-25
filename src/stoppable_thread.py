@@ -2,7 +2,7 @@ from typing import Any, Callable, Dict, Optional
 import threading
 import traceback
 
-class LoopingThread(threading.Thread):
+class StoppableThread(threading.Thread):
     def __init__(
         self, 
         loop_method: Callable[[threading.Event, Dict[Any, Any]], None], 
