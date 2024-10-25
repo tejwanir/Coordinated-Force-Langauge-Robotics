@@ -93,3 +93,10 @@ class Robot:
                 self.set_axes(force, new_force, axes_to_deadband)
         
         return self.get_axes(force, axes)
+    
+    def __enter__(self):
+        self.control.zeroFtSensor()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.set_velocity(Robot.zeroed_translation_rotation())
