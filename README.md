@@ -8,15 +8,15 @@ TODO: project description
 
 ### Virtual environment setup using `pyenv` and `pyenv-virtualenv`
 It's recommended to have on your system [`pyenv`](https://github.com/pyenv/pyenv) to manage multiple Python versions and [`pyenv-virtualenv`](https://github.com/pyenv/pyenv-virtualenv) to manage multiple virtual environments alongside `pyenv`.
-1. Install Python 3.117
+1. Install Python 3.8.20
 
     ```
-    pyenv install 3.11.7
+    pyenv install 3.8.20
     ```
 2. Create the virtual environment
 
     ```
-    pyenv virtualenv 3.11.7 [the virtual environment name]
+    pyenv virtualenv 3.8.20 [the virtual environment name]
     ```
 3. Activate the virtual environment
 
@@ -42,7 +42,7 @@ It's recommended to have on your system [`pyenv`](https://github.com/pyenv/pyenv
     ```
     The output should show
     ```
-    Python 3.11.7
+    Python 3.8.20
     ```
 6. Verify the correct pip is being used
 
@@ -54,7 +54,7 @@ It's recommended to have on your system [`pyenv`](https://github.com/pyenv/pyenv
     pip [some version] from [some path]/.pyenv/versions/[the virtual environment name]/lib/python3.11/site-packages/pip (python 3.11)
     ```
 ### Install project modules
-Once a virtual environment that uses Python version `3.11.7` exists on the system and is activated, simply run:
+Once a virtual environment that uses Python version `3.8.20` is activated, simply run:
 ```
 pip install -r requirements.txt
 ```
