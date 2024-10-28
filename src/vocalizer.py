@@ -9,6 +9,9 @@ class Vocalizer:
         self.last_utter_time = time.time() - buffer_period
 
     def utter(self, phrase: str, interupt: bool = False) -> bool:
+        if phrase == "":
+            return False
+
         if interupt:
             os.system(f'killall say; say "{phrase}" &')
 

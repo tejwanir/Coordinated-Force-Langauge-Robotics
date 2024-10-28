@@ -5,6 +5,34 @@ from typing import List, Tuple
 import random
 
 
+class DirectionalLanguageGenerator:
+    def __init__(self, phrases: List[List[str]], direction_pairs: List[Tuple[str, str]], magnitude_interval: float = 10.0) -> None:
+        self.phrases = phrases
+        self.direction_pairs = direction_pairs
+        self.magnitude_interval = magnitude_interval
+
+    def _choose_phrase(self, F_error: float | NDArray) -> str:
+        magnitude = np.linalg.norm(F_error)
+        magnitude_level = int(magnitude / self.magnitude_interval)
+
+        index = np.clip(magnitude_level, 0, len(self.phrases) - 1)
+        phrase_group = self.phrases[index]
+
+        return "" if len(phrase_group) == 0 else random.choice(phrase_group)
+
+    def _get_direction_string(self, F_error: float | NDArray) -> str:
+        if not isinstance(F_error, np.ndarray):
+            F_error = np.array([F_error])
+
+        component = np.argmax(abs(F_error))
+        return self.direction_pairs[component][1 if F_error[component] > 0 else 0]
+
+    def generate(self, F_error: float | NDArray) -> str:
+        phrase = self._choose_phrase(F_error)
+        direction = self._get_direction_string(F_error)
+        return phrase.replace('<direction>', direction)
+
+
 class TranslationalLanguageGenerator:
     def __init__(self, direction_pairs: List[Tuple[str, str]], misaligned_phrases: List[str],
                  aligned_phrases: List[str], urgency_thresholds: Tuple[float, float]) -> None:
