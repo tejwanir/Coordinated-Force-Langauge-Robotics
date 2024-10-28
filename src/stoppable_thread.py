@@ -6,7 +6,7 @@ class StoppableThread(threading.Thread):
     def __init__(
         self, 
         stoppable_method: Callable[[threading.Event, Dict[Any, Any]], None], 
-        stoppable_method_args: Optional[Dict[Any, Any]] = None, 
+        stoppable_method_args: Optional[Any] = None, 
         name: Optional[str] = None
     ):
         super().__init__(name=name)
@@ -21,7 +21,7 @@ class StoppableThread(threading.Thread):
             print(f'Error occurred in thread {self.name}: {e}')
             traceback.print_exc()
         finally:
-            self.stop_event.set()
+            self.stop()
 
     def stop(self):
         self.stop_event.set()
