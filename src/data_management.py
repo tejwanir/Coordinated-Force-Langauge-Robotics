@@ -1,6 +1,5 @@
 from typing import Any, Callable, Dict, Optional, List, Tuple, Union
 import threading
-import copy
 
 class DataBuffer:
     def __init__(self, data=None):
@@ -90,10 +89,10 @@ class TabularDataStore:
         else:
             raise TypeError("Column must be specified by index (int) or name (str).")
         
-        return copy.deepcopy(table[column_name])
+        return table[column_name]
     
     def get_all_columns(self) -> Dict[str, List[Any]]:
-        return copy.deepcopy(self._table.read())
+        return self._table.read()
     
     def __getitem__(self, key: Union[int, str, List[Union[int, str]]]) -> Union[List[Any], Dict[str, List[Any]]]:
         if isinstance(key, (int, str)):
