@@ -1,5 +1,6 @@
 from typing import Any, Callable, Dict, Optional, List, Tuple, Union
 import threading
+import pandas as pd
 
 class DataBuffer:
     def __init__(self, data=None):
@@ -107,4 +108,7 @@ class TabularDataStore:
             method()
 
     def __len__(self):
-        return len(self._table._data[self.column_names[0]])
+        return len(self.get_column(0))
+    
+    def to_pandas(self):
+        return pd.DataFrame(self.get_all_columns(), columns=self.column_names)
