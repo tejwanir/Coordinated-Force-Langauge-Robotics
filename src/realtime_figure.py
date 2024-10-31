@@ -3,7 +3,7 @@ from numbers import Number
 from matplotlib import pyplot as plt
 import numpy as np
 from IPython.display import clear_output
-import time
+from timer import Timer
 
 class RealtimeFigure:
     def __init__(
@@ -26,6 +26,7 @@ class RealtimeFigure:
         self.subplot_options_set = subplot_options_set
         self.refresh_rate = refresh_rate
         self.initialized = False
+        self.timer = Timer()
 
     def subplots_num(self):
         return self.rows * self.columns
@@ -67,13 +68,17 @@ class RealtimeFigure:
         self.fig.tight_layout()
 
     def update(self, data_sets: List[Optional[Tuple[List[Number], List[Number]]]]):
+        if self.timer.t() < 1 / self.refresh_rate:
+            return
+
+        self.timer.reset()
+            
         if not self.initialized:
             self.initialize()
             self.initialized = True
         self.pre_update_hook()
         self.update_subplots(data_sets)
         self.render()
-        time.sleep(1 / self.refresh_rate)
 
     def initialize(self):
         pass
