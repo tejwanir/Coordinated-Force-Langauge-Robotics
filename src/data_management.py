@@ -92,8 +92,11 @@ class TabularDataStore:
         
         return table[column_name]
     
-    def get_all_columns(self) -> Dict[str, List[Any]]:
-        return self._table.read()
+    def get_all_columns(self, ordered: bool = False) -> Union[Dict[str, List[Any]], Tuple[List[Any]]]:
+        table = self._table.read()
+        if ordered:
+            table = tuple(table[column_name] for column_name in self.column_names)
+        return table
     
     def __getitem__(self, key: Union[int, str, List[Union[int, str]]]) -> Union[List[Any], Dict[str, List[Any]]]:
         if isinstance(key, (int, str)):
