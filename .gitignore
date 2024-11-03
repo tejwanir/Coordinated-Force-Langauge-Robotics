@@ -17,3 +17,6 @@ __pycache__/
 
 # Ignore .npy files
 *.npy
+
+# Ignore .DS_store files
+*.DS_store

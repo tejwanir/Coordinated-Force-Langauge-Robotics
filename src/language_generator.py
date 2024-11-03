@@ -11,6 +11,9 @@ class DirectionalLanguageGenerator:
         self.direction_pairs = direction_pairs
         self.magnitude_interval = magnitude_interval
 
+    def get_emphasis(self, F_error: float | NDArray) -> float:
+        return np.linalg.norm(F_error) / self.magnitude_interval
+
     def _choose_phrase(self, F_error: float | NDArray) -> str:
         magnitude = np.linalg.norm(F_error)
         magnitude_level = int(magnitude / self.magnitude_interval)
