@@ -80,11 +80,11 @@ Coordinated-Force-Language-Robotics/
 ```
 
 - `Coordinated-Force-Language-Robotics` - project root
-- `src` - project code
-- `src/__init__.py` - makes `src` a module which allows project code to be imported into interactive python notebooks
-- `notebooks` - while notebooks are git ignored no matter where they exist in the project directory structure, put any created notebooks into this appropiate folder
-- `notebooks/preamble.py` - helper script that if imported into a notebook will allow further imports from `src`
-- `notebooks/significant_notebook.ipynb` - any significant notebooks that should be commmitted must inclulde the line in the `.gitignore` file:
+- `src/` - project code
+- `src/__init__.py` - makes `src/` a module which allows project code to be imported into interactive python notebooks
+- `notebooks/` - while notebooks are git ignored no matter where they exist in the project directory structure, put any created notebooks into this appropiate folder
+- `notebooks/preamble.py` - helper script that if imported into a notebook will allow further imports from `src/`
+- `notebooks/significant_notebook.ipynb` - any significant files in `notebooks/` that should be commmitted must inclulde the line in the `.gitignore` file:
     ```
     !notebooks/[name of significant notebook].ipynb
     ```
