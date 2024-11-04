@@ -5,7 +5,10 @@ venv/
 # Ignore all notebooks
 *.ipynb
 
-# Don't ignore significant notebooks
+# By default ignore files in notebooks dir
+notebooks/
+
+# Don't ignore significant files in notebooks dir
 !notebooks/calibrate.ipynb
 !notebooks/hand_guiding_experiment.ipynb
 
