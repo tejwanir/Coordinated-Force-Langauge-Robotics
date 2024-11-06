@@ -8,15 +8,15 @@ TODO: project description
 
 ### Virtual environment setup using `pyenv` and `pyenv-virtualenv`
 It's recommended to have on your system [`pyenv`](https://github.com/pyenv/pyenv) to manage multiple Python versions and [`pyenv-virtualenv`](https://github.com/pyenv/pyenv-virtualenv) to manage multiple virtual environments alongside `pyenv`.
-1. Install Python 3.8.20
+1. Install Python 3.8
 
     ```
-    pyenv install 3.8.20
+    pyenv install 3.8.[some patch version]
     ```
 2. Create the virtual environment
 
     ```
-    pyenv virtualenv 3.8.20 [the virtual environment name]
+    pyenv virtualenv 3.8.[some patch version] [the virtual environment name]
     ```
 3. Activate the virtual environment
 
@@ -42,7 +42,7 @@ It's recommended to have on your system [`pyenv`](https://github.com/pyenv/pyenv
     ```
     The output should show
     ```
-    Python 3.8.20
+    Python 3.8.[some patch version]
     ```
 6. Verify the correct pip is being used
 
@@ -51,10 +51,10 @@ It's recommended to have on your system [`pyenv`](https://github.com/pyenv/pyenv
     ```
     The output should show
     ```
-    pip [some version] from [some path]/.pyenv/versions/[the virtual environment name]/lib/python3.11/site-packages/pip (python 3.11)
+    pip [some version] from [some path]/.pyenv/versions/[the virtual environment name]/lib/python3.8/site-packages/pip (python 3.8)
     ```
 ### Install project modules
-Once a virtual environment that uses Python version `3.8.20` is activated, simply run:
+Once a virtual environment that uses Python version `3.8` is activated, simply run:
 ```
 pip install -r requirements.txt
 ```
@@ -67,6 +67,21 @@ TODO: describe network ip stuff, maybe mention robot specs like specific model e
 Coordinated-Force-Language-Robotics/
 ├── src/
 │   ├── __init__.py
+│   ├── services/
+│   │   ├── some_service/
+│   │   │   ├── __init__.py
+│   │   │   ├── some_service_code.py
+│   │   │   └── ...
+│   │   └── ...
+│   ├── common/
+│   │   ├── __init__.py
+│   │   ├── some_common_code.py
+│   │   └── ...
+│   ├── scripts/
+│   │   ├── __init__.py
+│   │   ├── some_script.py
+│   │   └── ...
+│   ├── main.py
 │   └── ...
 ├── notebooks/
 │   ├── preamble.py
@@ -74,16 +89,20 @@ Coordinated-Force-Language-Robotics/
 │   ├── ...
 │   └── significant_notebook.ipynb
 ├── .gitignore
-├── .python-version
 ├── requirements.txt
 └── README.md
 ```
 
 - `Coordinated-Force-Language-Robotics` - project root
-- `src/` - project code
-- `src/__init__.py` - makes `src/` a module which allows project code to be imported into interactive python notebooks
-- `notebooks/` - while notebooks are git ignored no matter where they exist in the project directory structure, put any created notebooks into this appropiate folder
-- `notebooks/preamble.py` - helper script that if imported into a notebook will allow further imports from `src/`
+- `src/` - project source code
+- `src/__init__.py` - makes `src/` a package which allows project source code to be imported into other code outside of `src/` such as `notebooks/`
+- `src/services/` - project source code is split into multiple services that are responsible for different features and logic; one example is the service that manages and controls the robot
+- `src/services/some_service/` - holds all of the code for a particular service
+- `src/common/` - holds common code used throughout project source code
+- `src/scripts/` - helper scripts that are their own entry points
+- `src/main.py` - entry point of the project source code
+- `notebooks/` - while notebooks are git ignored no matter where they exist in the project directory structure, put any created notebooks into this appropiate folder; any files in this directory are gitignored by default as well
+- `notebooks/preamble.py` - helper script that if imported into a notebook will allow further imports from `src/`; this file is not gitignored
 - `notebooks/significant_notebook.ipynb` - any significant files in `notebooks/` that should be commmitted must inclulde the line in the `.gitignore` file:
     ```
     !notebooks/[name of significant notebook].ipynb
