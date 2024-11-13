@@ -81,6 +81,3 @@ class RobotInterface:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.set_velocity(RobotInterface.Axes.zeros())
-
-if __name__ == '__main__':
-    print(RobotInterface.Axes.zeros())
