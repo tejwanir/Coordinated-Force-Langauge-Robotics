@@ -9,7 +9,6 @@ venv/
 notebooks/
 
 # Don't ignore significant files in notebooks dir
-!notebooks/
 !notebooks/preamble.py
 !notebooks/calibrate.ipynb
 !notebooks/hand_guiding_experiment.ipynb
