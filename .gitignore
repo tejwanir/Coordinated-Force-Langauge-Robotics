@@ -12,6 +12,7 @@ notebooks/
 !notebooks/preamble.py
 !notebooks/calibrate.ipynb
 !notebooks/hand_guiding_experiment.ipynb
+!notebooks/representation_space_transformation_experiment.ipynb
 
 # Ignore Python caches
 __pycache__/

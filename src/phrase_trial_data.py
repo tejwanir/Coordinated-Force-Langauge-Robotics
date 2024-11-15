@@ -17,13 +17,13 @@ class PhraseTrialData:
         self.force.append(force)
 
     def save(self):
-        os.makedirs('phrase_trail_data', exist_ok=True)
+        os.makedirs('phrase_trial_data', exist_ok=True)
 
         safe_phrase = self.phrase.replace(" ", "_")
 
         file_name = f"{safe_phrase}_{self.user_id}.pkl"
 
-        file_path = os.path.join('phrase_trail_data', file_name)
+        file_path = os.path.join('phrase_trial_data', file_name)
 
         with open(file_path, 'wb') as file:
             pickle.dump(self, file)
