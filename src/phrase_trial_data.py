@@ -36,12 +36,12 @@ class PhraseTrialData:
 
         return ''
 
-    def save(self):
+    def save(self, index):
         os.makedirs('phrase_trial_data', exist_ok=True)
 
         safe_phrase = self.phrase.replace(" ", "_")
 
-        file_name = f"{self.user_id}__{safe_phrase}.pkl"
+        file_name = f"{self.user_id}__{index}__{safe_phrase}.pkl"
 
         file_path = os.path.join('phrase_trial_data', file_name)
 
