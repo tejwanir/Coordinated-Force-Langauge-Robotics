@@ -65,3 +65,7 @@ class ConsoleCommandThread(StoppableThread):
         command_event_status = self.command_events[command].is_set()
         self.command_events[command].clear()
         return command_event_status
+    
+    def reset(self):
+        for command_event in self.command_events.values():
+            command_event.clear()
