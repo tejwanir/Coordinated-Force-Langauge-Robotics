@@ -1,3 +1,5 @@
+from timer import Timer
+from realtime_figure import RealtimeFigureWindow
 from optoforce import OptoForce22 as OptoForce
 import numpy as np
 from numpy.typing import NDArray
@@ -16,7 +18,7 @@ class OptoForceSensor(ForceSensor):
     FX_SCALE = 0.1 * 7925 / 300
     FY_SCALE = 0.1 * 8641 / 300
     FZ_SCALE = 0.1 * 6049 / 2000
-    TX_SCALE = 0.
+    TX_SCALE = 0.1
     TY_SCALE = 0.1
     TZ_SCALE = 0.1
 
@@ -38,3 +40,25 @@ class OptoForceSensor(ForceSensor):
 
     def __del__(self):
         self.sensor.close()
+
+
+if __name__ == '__main__':
+    figure = RealtimeFigureWindow(refresh_rate=100, subplot_options_set=[
+        {'colors': ['red', 'green', 'blue']}])
+
+    timer = Timer()
+    sensor = OptoForceSensor()
+    zero_force = sensor.read()
+    force_axis = []
+    t_axis = []
+
+    while True:
+        t = timer.t()
+        force, torque = sensor.read()
+
+        t_axis.append(t)
+        force_axis.append(force)
+
+        for options in figure.subplot_options_set:
+            options['xlim'] = (t - 10, t)
+            figure.update([(t_axis, force_axis)])
