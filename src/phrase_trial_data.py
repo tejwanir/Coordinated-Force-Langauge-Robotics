@@ -18,7 +18,7 @@ class PhraseTrialData:
                 phrase_trial_data.dt = np.array(phrase_trial_data.dt)
                 phrase_trial_data.position = np.array(phrase_trial_data.position) @ transformation.T
                 phrase_trial_data.velocity = np.array(phrase_trial_data.velocity) @ transformation.T
-                phrase_trial_data.force = np.array(phrase_trial_data.force) @ transformation.T
+                phrase_trial_data.external_force = np.array(phrase_trial_data.external_force) @ transformation.T
 
             return phrase_trial_data
 
@@ -33,14 +33,16 @@ class PhraseTrialData:
         self.dt = [] # this should be shifted back by 1 because dt is measured from t-1 to t but that would implied the dt recorded at t is really the dt starting at t-1
         self.position = []
         self.velocity = []
-        self.force = []
+        self.external_force = []
+        self.internal_force = []
 
-    def append(self, time: float, dt: float, position: NDArray, velocity: NDArray, force: NDArray) -> None:
+    def append(self, time: float, dt: float, position: NDArray, velocity: NDArray, external_force: NDArray, internal_force: NDArray) -> None:
         self.time.append(time)
         self.dt.append(dt)
         self.position.append(position)
         self.velocity.append(velocity)
-        self.force.append(force)
+        self.external_force.append(external_force)
+        self.internal_force.append(internal_force)
 
     def save(self, index: int, dir: str) -> None:
         os.makedirs(dir, exist_ok=True)
