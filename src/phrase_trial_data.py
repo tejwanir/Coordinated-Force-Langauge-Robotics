@@ -22,13 +22,13 @@ class PhraseTrialData:
 
             return phrase_trial_data
 
-    def __init__(self, user_id: int, trial_number: int, phrase: str, adverb: str, first_direction: str, second_direction: str):
+    def __init__(self, user_id: int, trial_number: int, phrase: str, adverb: str, first_cartesian_direction: str, second_cartesian_direction: str):
         self.user_id = user_id
         self.trial_number = trial_number
         self.phrase = phrase
-        self.phrase = adverb
-        self.phrase = first_direction
-        self.phrase = second_direction
+        self.adverb = adverb
+        self.first_cartesian_direction = first_cartesian_direction
+        self.second_cartesian_direction = second_cartesian_direction
         self.time = []
         self.dt = []
         self.position = []
