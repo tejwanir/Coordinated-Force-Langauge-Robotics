@@ -22,9 +22,13 @@ class PhraseTrialData:
 
             return phrase_trial_data
 
-    def __init__(self, phrase: str, user_id: int):
-        self.phrase = phrase
+    def __init__(self, user_id: int, trial_number: int, phrase: str, adverb: str, first_direction: str, second_direction: str):
         self.user_id = user_id
+        self.trial_number = trial_number
+        self.phrase = phrase
+        self.phrase = adverb
+        self.phrase = first_direction
+        self.phrase = second_direction
         self.time = []
         self.dt = []
         self.position = []
@@ -37,62 +41,6 @@ class PhraseTrialData:
         self.position.append(position)
         self.velocity.append(velocity)
         self.force.append(force)
-
-    def get_directions(self) -> Tuple[str]:
-        directions = ['left', 'right', 'up', 'down', 'forward', 'backward']
-        phrase_directions = []
-
-        phrase = self.phrase.replace('above', 'up').replace('below', 'down').replace('ahead', 'forward').replace('back', 'backward')
-
-        for direction in directions:
-            if direction in phrase:
-                index = phrase.index(direction)
-                phrase_directions.append((index, direction))
-
-        phrase_directions.sort()
-        return tuple([direction for index, direction in phrase_directions])
-    
-    def get_adverb(self) -> str:
-        adverbs = [
-            'slightly',
-            'greatly',
-            'smoothly',
-            'sharply',
-            'slowly',
-            'quickly',
-            'lightly',
-            'significantly',
-            'softly',
-            'harshly',
-            'gradually',
-            'immediately',
-        ]
-
-        for adverb in adverbs:
-            if adverb in self.phrase:
-                return adverb
-
-        return ''
-    
-    def get_action(self) -> str:
-        actions = [
-            'move',
-            'shift',
-            'adjust',
-            'proceed',
-            'ease',
-            'head',
-            'scoot',
-            'advance',
-            'go'
-        ]
-
-        phrase = self.phrase.replace('ahead', 'forward')
-        for action in actions:
-            if action in phrase:
-                return action
-        
-        return ''
 
     def save(self, index: int) -> None:
         os.makedirs('phrase_trial_data', exist_ok=True)
