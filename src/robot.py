@@ -59,13 +59,16 @@ class Robot:
     def zeroed_translation_rotation():
         return np.zeros(len(Robot.TRANSLATION_ROTATION))
 
-    def __init__(self, ip: str, translational_force_deadband: Optional[float] = None, rotational_force_deadband: Optional[float] = None):
+    def __init__(self, ip: str, translational_force_deadband: Optional[float] = None, rotational_force_deadband: Optional[float] = None, init_pose: Optional[List[float]] = None):
         self.receive = rtde_receive.RTDEReceiveInterface(ip)
         self.control = rtde_control.RTDEControlInterface(ip)
         self.translational_force_deadband = translational_force_deadband
         self.rotational_force_deadband = rotational_force_deadband
         self._pose_input = Robot.zeroed_translation_rotation()
         self._velocity_input = Robot.zeroed_translation_rotation()
+        if init_pose is not None:
+            self.set_pose(init_pose)
+        self.INIT_POSE = self.get_pose()
 
     def get_pose(self, axes: Optional[Union[int, List[int], List[List[int]]]] = None):
         return self.get_axes(self.receive.getActualTCPPose(), axes)

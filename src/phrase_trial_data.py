@@ -10,7 +10,7 @@ class PhraseTrialData:
     def load(cls, file_path: str, transformation: NDArray | None = None):
         with open(file_path, 'rb') as file:
             data = pickle.load(file)
-            phrase_trial_data = cls(data.phrase, data.user_id)
+            phrase_trial_data = cls(None, None, None, None, None, None,)
             phrase_trial_data.__dict__ = data.__dict__
 
             if transformation is not None:
@@ -30,7 +30,7 @@ class PhraseTrialData:
         self.first_cartesian_direction = first_cartesian_direction
         self.second_cartesian_direction = second_cartesian_direction
         self.time = []
-        self.dt = []
+        self.dt = [] # this should be shifted back by 1 because dt is measured from t-1 to t but that would implied the dt recorded at t is really the dt starting at t-1
         self.position = []
         self.velocity = []
         self.force = []
@@ -42,14 +42,14 @@ class PhraseTrialData:
         self.velocity.append(velocity)
         self.force.append(force)
 
-    def save(self, index: int) -> None:
-        os.makedirs('lang2force_trial_data', exist_ok=True)
+    def save(self, index: int, dir: str) -> None:
+        os.makedirs(dir, exist_ok=True)
 
         safe_phrase = self.phrase.replace(" ", "_")
 
         file_name = f"{self.user_id}__{index}__{safe_phrase}.pkl"
 
-        file_path = os.path.join('lang2force_trial_data', file_name)
+        file_path = os.path.join(dir, file_name)
 
         with open(file_path, 'wb') as file:
             pickle.dump(self, file)
